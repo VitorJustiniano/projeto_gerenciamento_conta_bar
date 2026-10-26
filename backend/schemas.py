@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, Field, computed_field, ConfigDict
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional, List
@@ -6,7 +6,7 @@ from typing import Optional, List
 
 # ---------- Categoria ----------
 class CategoriaBase(BaseModel):
-    nome: str
+    nome: str = Field(min_length=1, max_length=60)
 
 class CategoriaCreate(CategoriaBase):
     pass
@@ -14,15 +14,14 @@ class CategoriaCreate(CategoriaBase):
 class CategoriaResponse(CategoriaBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ---------- Produto ----------
 class ProdutoBase(BaseModel):
-    nome: str
+    nome: str = Field(min_length=1, max_length=120)
     categoria_id: int
-    preco_atual: Decimal = Field(ge=0)
+    preco_atual: Decimal = Field(ge=0, max_digits=10, decimal_places=2)
 
 class ProdutoCreate(ProdutoBase):
     pass
@@ -32,21 +31,20 @@ class ProdutoResponse(ProdutoBase):
     ativo: bool
     categoria: CategoriaResponse
 
-    class Config:
-        from_attributes = True
-
+    model_config = ConfigDict(from_attributes=True)
+    
 class ProdutoUpdate(BaseModel):
-    nome: Optional[str] = None
+    nome: Optional[str] = Field(default=None, min_length=1, max_length=120)
     categoria_id: Optional[int] = None
-    preco_atual: Optional[Decimal] = Field(default=None, ge=0)
+    preco_atual: Optional[Decimal] = Field(default=None, ge=0, max_digits=10, decimal_places=2)
     ativo: Optional[bool] = None
 
 
 # ---------- Cliente ----------
 class ClienteBase(BaseModel):
-    nome: str
-    apelido: Optional[str] = None
-    telefone: Optional[str] = None
+    nome: str = Field(min_length=1, max_length=120)
+    apelido: Optional[str] = Field(default=None, max_length=60)
+    telefone: Optional[str] = Field(default=None, max_length=20)
     cpf: Optional[str] = Field(default=None, pattern=r"^\d{11}$")
 
 class ClienteCreate(ClienteBase):
@@ -59,13 +57,12 @@ class ClienteResponse(BaseModel):
     telefone: Optional[str] = None
     ativo: bool
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class ClienteUpdate(BaseModel):
-    nome: Optional[str] = None
-    apelido: Optional[str] = None
-    telefone: Optional[str] = None
+    nome: Optional[str] = Field(default=None, min_length=1, max_length=120)
+    apelido: Optional[str] = Field(default=None, max_length=60)
+    telefone: Optional[str] = Field(default=None, max_length=20)
     cpf: Optional[str] = Field(default=None, pattern=r"^\d{11}$")
     ativo: Optional[bool] = None
 
@@ -77,7 +74,7 @@ class LancamentoBase(BaseModel):
 
 class LancamentoCreate(LancamentoBase):
     # se vier vazio, o crud usa o preço do produto (ex.: Doce informa na hora)
-    valor_unitario: Optional[Decimal] = Field(default=None, ge=0)
+    valor_unitario: Optional[Decimal] = Field(default=None, ge=0, max_digits=10, decimal_places=2)
 
 class LancamentoResponse(BaseModel):
     id: int
@@ -91,13 +88,12 @@ class LancamentoResponse(BaseModel):
     def subtotal(self) -> Decimal:
         return self.quantidade * self.valor_unitario
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class LancamentoUpdate(BaseModel):
     produto_id: Optional[int] = None
     quantidade: Optional[int] = Field(default=None, gt=0)
-    valor_unitario: Optional[Decimal] = Field(default=None, ge=0)
+    valor_unitario: Optional[Decimal] = Field(default=None, ge=0, max_digits=10, decimal_places=2)
 
 
 class ExtratoCliente(BaseModel):

@@ -12,3 +12,20 @@ dependencies = [
     "sqlalchemy>=2.1.6",
     "uvicorn>=0.54.0",
 ]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["backend"]
+testpaths = ["backend/tests"]
+filterwarnings = [
+    "ignore:Dialect sqlite.pysqlite does \\*not\\* support Decimal:sqlalchemy.exc.SAWarning",
+]
+
+[tool.coverage.run]
+omit = ["backend/tests/*"]

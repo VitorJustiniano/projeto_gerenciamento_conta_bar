@@ -122,8 +122,11 @@ def update_cliente(cliente_id: int, cliente: ClienteUpdate, db: Session = Depend
 # criar rota de adicionar um item no fiado do cliente
 @router.post("/clientes/{cliente_id}/lancamentos/", response_model=LancamentoResponse)
 def create_lancamento(cliente_id: int, lancamento: LancamentoCreate, db: Session = Depends(get_db)):
-    if crud.get_cliente(db=db, cliente_id=cliente_id) is None:
+    db_cliente = crud.get_cliente(db=db, cliente_id=cliente_id)
+    if db_cliente is None:
         raise HTTPException(status_code=404, detail="voce ta lancando fiado pra um cliente que nao existe")
+    if not db_cliente.ativo:
+        raise HTTPException(status_code=400, detail="esse cliente esta desativado")
 
     produto = crud.get_produto(db=db, produto_id=lancamento.produto_id)
     if produto is None or not produto.ativo:
