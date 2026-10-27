@@ -9,7 +9,9 @@ dependencies = [
     "psycopg2-binary>=2.9.13",
     "pydantic>=2.14.1",
     "python-dotenv>=1.2.4",
+    "requests>=2.34.2",
     "sqlalchemy>=2.1.6",
+    "streamlit>=1.66.1",
     "uvicorn>=0.54.0",
 ]
 

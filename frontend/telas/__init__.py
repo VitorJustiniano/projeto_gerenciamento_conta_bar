@@ -1,0 +1,1 @@
+"""Telas do frontend, uma por aba (não usar o nome 'pages': o Streamlit trata essa pasta de forma especial)."""

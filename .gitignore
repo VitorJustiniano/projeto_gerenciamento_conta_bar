@@ -8,6 +8,7 @@ wheels/
 .pytest_cache/
 .coverage
 *.db
+backup.sql
 
 # Virtual environments
 .venv

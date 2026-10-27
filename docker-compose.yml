@@ -33,16 +33,18 @@ services:
     networks:
       - mynetwork
 
-  ##frontend:
-  ##  build:
-  ##    context: ./frontend
-  ##    dockerfile: Dockerfile
-  ##  volumes:
-  ##    - ./frontend:/app
-  ##  ports:
-  ##   - "8501:8501"
-  ##  networks:
-  ##   - mynetwork
+  frontend:
+    build: ./frontend
+    ports:
+      - "8501:8501"
+    environment:
+      API_URL: http://backend:8000
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
+    networks:
+      - mynetwork
 
 networks:
   mynetwork:
